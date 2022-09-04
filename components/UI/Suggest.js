@@ -1,17 +1,14 @@
 import { View, Text, StyleSheet, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-function Suggest() {
+function Suggest({ title, author, image }) {
   return (
     <View style={styles.container}>
       <View style={styles.suggestTitle}>
-        <Image
-          source={require("../../assets/images/topHitVietnam.jpg")}
-          style={styles.image}
-        />
+        <Image source={{ uri: image }} style={styles.image} />
         <View style={styles.textContainer}>
-          <Text style={styles.text}>Hot Hits Vietnam</Text>
-          <Text style={styles.textTitle}>Zing mp3</Text>
+          <Text style={styles.text}>{title}</Text>
+          <Text style={styles.textTitle}>{author}</Text>
         </View>
       </View>
       <Ionicons name="heart-outline" color="#fff" size={26} />

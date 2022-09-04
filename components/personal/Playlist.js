@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import Suggest from "./Suggest";
+import Suggest from "../UI/Suggest";
 
 function Playlist() {
   return (
@@ -17,8 +17,8 @@ function Playlist() {
         <Text style={styles.suggestDesription}>
           Dựa trên lịch sử và thư viện cá nhân
         </Text>
-        <Suggest />
-        <Suggest />
+        <Suggest title="Top hit Vietnam" author="Zing mp3" />
+        <Suggest title="Top 100 nhạc trữ tình" author="Zing mp3" />
       </View>
     </View>
   );

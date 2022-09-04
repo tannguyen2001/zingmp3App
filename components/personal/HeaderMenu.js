@@ -1,7 +1,7 @@
-import { View, TextInput, Image, StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { View, Image, StyleSheet } from "react-native";
+import { useState } from "react";
 
-import GlobalStyles from "../../contants/GlobalStyles";
+import Search from "../UI/Search";
 
 function HeaderMenu() {
   return (
@@ -10,18 +10,7 @@ function HeaderMenu() {
         style={styles.imageAvatar}
         source={require("../../assets/images/avatar.jpg")}
       />
-      <View style={styles.searchContainer}>
-        <Ionicons name="search" color="#fff" size={24} />
-        <TextInput
-          placeholder="Tìm kiếm"
-          placeholderTextColor="#fff"
-          style={styles.searchInput}
-        />
-        <View style={styles.micIconContainer}>
-          <Ionicons name="mic" color="#fff" />
-        </View>
-      </View>
-      <Ionicons name="settings" color="#fff" size={32} />
+      <Search />
     </View>
   );
 }
@@ -31,35 +20,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  searchContainer: {
-    flexDirection: "row",
-    flex: 1,
-    justifyContent: "space-between",
-    marginHorizontal: 20,
-    alignItems: "center",
-    backgroundColor: GlobalStyles.purplePrimary,
-    borderRadius: 16,
-    paddingHorizontal: 8,
-  },
+
   imageAvatar: {
     width: 32,
     height: 32,
     borderRadius: 16,
-  },
-  searchInput: {
-    flex: 1,
-    textAlign: "left",
-    paddingHorizontal: 4,
-    color: "#fff",
-    fontSize: 16,
-  },
-  micIconContainer: {
-    width: 24,
-    height: 24,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "blue",
-    borderRadius: 12,
+    marginRight: 20,
   },
 });
 
