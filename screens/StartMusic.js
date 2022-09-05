@@ -38,21 +38,20 @@ function StartMusic({ route }) {
 
   useEffect(() => {
     (async () => {
-      const respone = await getSong(route.params.idSong);
-      setSong(respone.data);
-    })();
-
-    return () => {
-      setSong(null);
-    };
-  }, []);
-
-  useEffect(() => {
-    (async function () {
-      const { sound } = await Audio.Sound.createAsync({
-        uri: song.data[128],
+      await getSong(route.params.idSong).then((respone) => {
+        (async function () {
+          const { sound } = await Audio.Sound.createAsync({
+            uri: respone.data.data[128],
+          });
+          setSound(sound);
+        })();
       });
-      setSound(sound);
+
+      return sound
+        ? () => {
+            sound.unloadAsync();
+          }
+        : undefined;
     })();
 
     return sound
@@ -61,6 +60,8 @@ function StartMusic({ route }) {
         }
       : undefined;
   }, []);
+
+  useEffect(() => {}, []);
 
   return (
     <View style={styles.rootContainer}>
