@@ -3,93 +3,130 @@ import {
   Text,
   StyleSheet,
   SafeAreaView,
-  Image,
   Pressable,
-  Button,
+  Animated,
+  Easing,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { Audio } from "expo-av";
+import { Ionicons } from "@expo/vector-icons";
 
 import GlobalStyles from "../contants/GlobalStyles";
 import { getSong } from "../api/musicApi";
 
 function StartMusic({ route }) {
   const navigation = useNavigation();
+  const [isPlay, setIsPlay] = useState(false);
+  const animation = useState(new Animated.Value(0))[0];
+  const [sound, setSound] = useState(null);
 
-  const [song, setSong] = useState();
-  const [sound, setSound] = useState();
+  const CallAnimation = () => {
+    animation.setValue(0);
+    Animated.timing(animation, {
+      toValue: 1,
+      duration: 10000,
+      useNativeDriver: false,
+      easing: Easing.linear,
+    }).start(() => CallAnimation());
+  };
+  useEffect(() => {
+    CallAnimation();
+  }, []);
+  const RotateData = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
 
   async function playSound() {
+    setIsPlay(true);
     await sound.playAsync();
   }
 
   async function stopSound() {
+    setIsPlay(false);
     await sound.pauseAsync();
+  }
+
+  function changeHandlerSound() {
+    if (isPlay) {
+      stopSound();
+    } else {
+      playSound();
+    }
   }
 
   async function replaySound() {
     await sound.replayAsync();
   }
 
-  function buttonGoBackHandler() {
+  function goBackHandler() {
+    async function clean() {
+      if (sound) {
+        await sound.stopAsync();
+        await sound.unloadAsync();
+      }
+    }
+    clean();
     navigation.goBack();
   }
 
   useEffect(() => {
-    (async () => {
-      await getSong(route.params.idSong).then((respone) => {
-        (async function () {
-          const { sound } = await Audio.Sound.createAsync({
-            uri: respone.data.data[128],
-          });
-          setSound(sound);
-        })();
+    async function loadData() {
+      const response = await getSong(route.params.idSong);
+      const { sound } = await Audio.Sound.createAsync({
+        uri: response.data.data["128"],
       });
 
-      return sound
-        ? () => {
-            sound.unloadAsync();
-          }
-        : undefined;
-    })();
+      setSound(sound);
+      setIsPlay(true);
+      await sound.playAsync();
+    }
 
-    return sound
-      ? () => {
-          sound.unloadAsync();
-        }
-      : undefined;
+    loadData();
   }, []);
-
-  useEffect(() => {}, []);
 
   return (
     <View style={styles.rootContainer}>
       <SafeAreaView style={styles.container}>
         <View style={styles.songDescription}>
           <View style={styles.title}>
-            <Text style={styles.nameSong}>Ai là người thương em</Text>
-            <Text style={styles.nameSinger}>Quân A.P</Text>
+            <Text style={styles.nameSong}>{route.params.title}</Text>
+            <Text style={styles.nameSinger}>{route.params.author}</Text>
           </View>
-          <View style={styles.viewBtn}>
-            <Button title="Trở lại" onPress={buttonGoBackHandler} />
-          </View>
+          <Pressable style={[styles.viewBtn]} onPress={goBackHandler}>
+            <Ionicons name="arrow-back" size={30} color="#fff" />
+          </Pressable>
         </View>
         <View style={styles.toolMuic}>
-          <Image />
+          <Animated.Image
+            source={{ uri: route.params.image }}
+            style={[
+              styles.image,
+              isPlay && { transform: [{ rotate: RotateData }] },
+            ]}
+          />
+          <View style={styles.toolButton}>
+            <Ionicons name="play-back-circle-outline" size={40} color="#fff" />
+            <Ionicons
+              name={isPlay ? "pause-circle-outline" : "play-circle-outline"}
+              size={60}
+              color="#fff"
+              onPress={changeHandlerSound}
+            />
+            <Ionicons
+              name="play-forward-circle-outline"
+              size={40}
+              color="#fff"
+            />
+          </View>
+          <View style={styles.toolPlay}>
+            <Text style={{ color: "#fff" }}>0:00</Text>
+            <View style={styles.toolPlayWidth}></View>
+            <Text style={{ color: "#fff" }}>5.07</Text>
+          </View>
         </View>
       </SafeAreaView>
-      <Pressable onPress={playSound} style={{ flex: 1 }}>
-        <Text style={{ color: "#fff", fontSize: 40 }}>Phát nhạc</Text>
-      </Pressable>
-
-      <Pressable onPress={stopSound} style={{ flex: 1 }}>
-        <Text style={{ color: "#fff", fontSize: 40 }}>Dưng nhac</Text>
-      </Pressable>
-
-      <Pressable onPress={replaySound} style={{ flex: 1 }}>
-        <Text style={{ color: "#fff", fontSize: 40 }}>Phát lại</Text>
-      </Pressable>
     </View>
   );
 }
@@ -115,6 +152,36 @@ const styles = StyleSheet.create({
   nameSinger: {
     color: "#fff",
     opacity: 0.7,
+  },
+  toolMuic: {
+    flex: 1,
+    alignItems: "center",
+    marginTop: 160,
+  },
+  image: {
+    width: 280,
+    height: 280,
+    borderRadius: 140,
+  },
+
+  toolButton: {
+    marginTop: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: 220,
+  },
+
+  toolPlay: {
+    flexDirection: "row",
+    marginTop: 4,
+    alignItems: "center",
+  },
+  toolPlayWidth: {
+    width: 180,
+    height: 2,
+    backgroundColor: "#fff",
+    marginHorizontal: 8,
   },
 });
 

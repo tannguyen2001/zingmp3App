@@ -6,28 +6,40 @@ import { useNavigation } from "@react-navigation/native";
 import GlobalStyles from "../../contants/GlobalStyles";
 import Suggest from "./Suggest";
 import { getTop100 } from "../../api/musicApi";
+import formatVNtoENG from "../../format/formatVNtoENG";
 
 function Search() {
   const [search, setSearch] = useState("");
   const [listSong, setListSong] = useState([]);
   const [visibleSearchSong, setVisibleSearchSong] = useState(false);
+  const [DATA_SONGS, SETDATA_SONGS] = useState([]);
   const navigation = useNavigation();
 
   function searchInputHandler(value) {
     setSearch(value);
+
+    setListSong(
+      DATA_SONGS.filter((item) =>
+        formatVNtoENG(item.title).toLowerCase().includes(value)
+      )
+    );
   }
   useEffect(() => {
     async function fetchData() {
       const response = await getTop100();
-      setListSong(response.data);
+      SETDATA_SONGS(response.data);
+      setListSong(DATA_SONGS);
     }
 
     fetchData();
   }, []);
 
-  function handlerPressSongItem(idSong) {
+  function handlerPressSongItem(item) {
     navigation.navigate("startMusic", {
-      idSong: idSong,
+      idSong: item.encodeId,
+      author: item.artistsNames,
+      title: item.title,
+      image: item.thumbnailM,
     });
   }
 
@@ -37,7 +49,7 @@ function Search() {
         title={item.title}
         author={item.artistsNames}
         image={item.thumbnailM}
-        onPress={() => handlerPressSongItem(item.encodeId)}
+        onPress={() => handlerPressSongItem(item)}
       />
     );
   }
@@ -119,7 +131,7 @@ const styles = StyleSheet.create({
   absoluteComponent: {
     backgroundColor: "#201335e6",
     borderRadius: 8,
-    height: 380,
+    maxHeight: 380,
     top: 40,
     overflow: "hidden",
     position: "absolute",
