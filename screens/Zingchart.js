@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 function Zingchart() {
   return (
     <View>
-      <Text>Đây là màn hình Zingchart</Text>
+      <Text>Đây là màn hình zing chart</Text>
     </View>
   );
 }

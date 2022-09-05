@@ -1,6 +1,7 @@
 import { View, TextInput, StyleSheet, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 import GlobalStyles from "../../contants/GlobalStyles";
 import Suggest from "./Suggest";
@@ -9,6 +10,9 @@ import { getTop100 } from "../../api/musicApi";
 function Search() {
   const [search, setSearch] = useState("");
   const [listSong, setListSong] = useState([]);
+  const [visibleSearchSong, setVisibleSearchSong] = useState(false);
+  const navigation = useNavigation();
+
   function searchInputHandler(value) {
     setSearch(value);
   }
@@ -21,14 +25,29 @@ function Search() {
     fetchData();
   }, []);
 
+  function handlerPressSongItem(idSong) {
+    navigation.navigate("startMusic", {
+      idSong: idSong,
+    });
+  }
+
   function renderSong({ item }) {
     return (
       <Suggest
         title={item.title}
         author={item.artistsNames}
         image={item.thumbnailM}
+        onPress={() => handlerPressSongItem(item.encodeId)}
       />
     );
+  }
+
+  function handlerFocusSearchInput() {
+    setVisibleSearchSong(true);
+  }
+
+  function handlerBlurSearchInput() {
+    // setVisibleSearchSong(false);
   }
 
   return (
@@ -41,13 +60,20 @@ function Search() {
           style={styles.searchInput}
           value={search}
           onChangeText={searchInputHandler}
+          onFocus={handlerFocusSearchInput}
+          onBlur={handlerBlurSearchInput}
         />
         <View style={styles.micIconContainer}>
           <Ionicons name="mic" color="#fff" />
         </View>
       </View>
       <Ionicons name="settings" color="#fff" size={32} />
-      <View style={styles.absoluteComponent}>
+      <View
+        style={[
+          styles.absoluteComponent,
+          visibleSearchSong && styles.searchInputFocus,
+        ]}
+      >
         <FlatList
           data={listSong}
           renderItem={renderSong}
@@ -91,14 +117,19 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   absoluteComponent: {
-    position: "absolute",
-    zIndex: 3,
-    top: 44,
     backgroundColor: "#201335e6",
+    borderRadius: 8,
+    height: 380,
+    top: 40,
+    overflow: "hidden",
+    position: "absolute",
     left: -52,
     right: 0,
-    borderRadius: 4,
-    height: 380,
+    zIndex: 3,
+    display: "none",
+  },
+  searchInputFocus: {
+    display: "flex",
   },
 });
 

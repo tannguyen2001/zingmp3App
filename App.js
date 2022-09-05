@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import BottomNavigator from "./components/Tab/BottomNavigator";
+import StartMusic from "./screens/StartMusic";
 
 const StackTab = createNativeStackNavigator();
 
@@ -17,6 +18,13 @@ export default function App() {
             <StackTab.Screen
               name="bottomTab"
               component={BottomNavigator}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <StackTab.Screen
+              name="startMusic"
+              component={StartMusic}
               options={{
                 headerShown: false,
               }}

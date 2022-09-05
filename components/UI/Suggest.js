@@ -1,22 +1,31 @@
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-function Suggest({ title, author, image }) {
+function Suggest({ title, author, image, onPress }) {
   return (
-    <View style={styles.container}>
-      <View style={styles.suggestTitle}>
-        <Image source={{ uri: image }} style={styles.image} />
-        <View style={styles.textContainer}>
-          <Text style={styles.text}>{title}</Text>
-          <Text style={styles.textTitle}>{author}</Text>
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => pressed && styles.rootSugest}
+    >
+      <View style={styles.container}>
+        <View style={styles.suggestTitle}>
+          <Image source={{ uri: image }} style={styles.image} />
+          <View style={styles.textContainer}>
+            <Text style={styles.text}>{title}</Text>
+            <Text style={styles.textTitle}>{author}</Text>
+          </View>
         </View>
+        <Ionicons name="heart-outline" color="#fff" size={26} />
       </View>
-      <Ionicons name="heart-outline" color="#fff" size={26} />
-    </View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
+  rootSugest: {
+    opacity: 0.7,
+  },
+
   container: {
     flexDirection: "row",
     alignItems: "center",

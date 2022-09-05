@@ -17,8 +17,16 @@ function Playlist() {
         <Text style={styles.suggestDesription}>
           Dựa trên lịch sử và thư viện cá nhân
         </Text>
-        <Suggest title="Top hit Vietnam" author="Zing mp3" />
-        <Suggest title="Top 100 nhạc trữ tình" author="Zing mp3" />
+        <Suggest
+          title="Top hit Vietnam"
+          author="Zing mp3"
+          image="https://i.ytimg.com/vi/QnkN5iAQdu0/maxresdefault.jpg"
+        />
+        <Suggest
+          title="Top 100 nhạc trữ tình"
+          author="Zing mp3"
+          image="https://i.ytimg.com/vi/QnkN5iAQdu0/maxresdefault.jpg"
+        />
       </View>
     </View>
   );
